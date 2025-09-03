@@ -19,52 +19,21 @@ const ShowSchools: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay
-    setTimeout(() => {
-      const storedSchools = JSON.parse(localStorage.getItem('schools') || '[]');
-      
-      // Add some sample data if no schools exist
-      if (storedSchools.length === 0) {
-        const sampleSchools = [
-          {
-            id: 1,
-            name: "Greenwood International School",
-            address: "123 Education Street, Knowledge Park",
-            city: "Mumbai",
-            state: "Maharashtra",
-            contact: "9876543210",
-            email_id: "info@greenwood.edu",
-            image: "https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=800"
-          },
-          {
-            id: 2,
-            name: "Sunrise Public School",
-            address: "456 Learning Avenue, Academic City",
-            city: "Delhi",
-            state: "Delhi",
-            contact: "9876543211",
-            email_id: "contact@sunrise.edu",
-            image: "https://images.pexels.com/photos/289740/pexels-photo-289740.jpeg?auto=compress&cs=tinysrgb&w=800"
-          },
-          {
-            id: 3,
-            name: "Blue Hills Academy",
-            address: "789 Wisdom Road, Scholar's District",
-            city: "Bangalore",
-            state: "Karnataka",
-            contact: "9876543212",
-            email_id: "admin@bluehills.edu",
-            image: "https://images.pexels.com/photos/159844/pexels-photo-159844.jpeg?auto=compress&cs=tinysrgb&w=800"
-          }
-        ];
-        localStorage.setItem('schools', JSON.stringify(sampleSchools));
-        setSchools(sampleSchools);
-      } else {
-        setSchools(storedSchools);
-      }
+  const fetchSchools = async () => {
+    try {
+      const response = await fetch("/api/schools");
+      const data = await response.json();
+      setSchools(data);
+    } catch (error) {
+      console.error("Error fetching schools:", error);
+    } finally {
       setLoading(false);
-    }, 500);
-  }, []);
+    }
+  };
+
+  fetchSchools();
+}, []);
+
 
   if (loading) {
     return (

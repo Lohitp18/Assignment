@@ -41,41 +41,40 @@ const AddSchool: React.FC = () => {
   }, [watchImage]);
 
   const onSubmit = async (data: SchoolFormData) => {
-    setIsSubmitting(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    try {
-      const schools = JSON.parse(localStorage.getItem('schools') || '[]');
-      const newSchool = {
-        id: Date.now(),
+  setIsSubmitting(true);
+
+  try {
+    const response = await fetch("http://localhost:5000/api/schools", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         name: data.name,
         address: data.address,
         city: data.city,
         state: data.state,
         contact: data.contact,
         email_id: data.email_id,
-        image: imagePreview || 'https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=800'
-      };
-      
-      schools.push(newSchool);
-      localStorage.setItem('schools', JSON.stringify(schools));
-      
-      setSubmitSuccess(true);
-      reset();
-      setImagePreview('');
-      
-      setTimeout(() => {
-        setSubmitSuccess(false);
-        navigate('/');
-      }, 2000);
-    } catch (error) {
-      console.error('Error saving school:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+        image: imagePreview || null,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to save school");
+
+    setSubmitSuccess(true);
+    reset();
+    setImagePreview("");
+
+    setTimeout(() => {
+      setSubmitSuccess(false);
+      navigate("/");
+    }, 2000);
+  } catch (error) {
+    console.error("Error saving school:", error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   if (submitSuccess) {
     return (
